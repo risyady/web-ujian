@@ -19,27 +19,32 @@ class AuthController extends Controller
             'jurusan_id' => 'required_if:role,siswa|exists:jurusans,id'
         ]);
 
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'role' => $request->role,
-        ]);
-
-        if ($request->role === 'siswa') {
-            Siswa::create([
-                'user_id' => $user->id,
-                'nisn' => $request->nisn,
-                'jurusan_id' => $request->jurusan_id,
+        try {
+            $user = User::create([
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => Hash::make($request->password),
+                'role' => $request->role,
             ]);
+
+            if ($request->role === 'siswa') {
+                Siswa::create([
+                    'user_id' => $user->id,
+                    'nisn' => $request->nisn,
+                    'jurusan_id' => $request->jurusan_id,
+                ]);
+            }
+
+            $token = $user->createToken('auth_token')->plainTextToken;
+
+            return $this->createdResponse([
+                'user' => $user,
+                'token' => $token,
+            ], 'Registrasi berhasil');
+
+        } catch (\Exception $e) {
+            return this->serverErrorResponse($e->getMessage());
         }
-
-        $token = $user->createToken('auth_token')->plainTextToken;
-
-        return $this->createdResponse([
-            'user' => $user,
-            'token' => $token,
-        ], 'Registrasi berhasil');
     }
 
     public function login(Request $request) {
@@ -48,34 +53,50 @@ class AuthController extends Controller
             'password' => 'required',
         ]);
 
-        $user = User::where('email', $request->email)->first();
+        try {
+            $user = User::where('email', $request->email)->first();
 
-        if (!$user || !Hash::check($request->password, $user->password)) {
-            return $this->errorResponse('Email atau password salah', 401);
+            if (!$user || !Hash::check($request->password, $user->password)) {
+                return $this->errorResponse('Email atau password salah', 401);
+            }
+
+            $user->tokens()->delete();
+            $token = $user->createToken('auth_token')->plainTextToken;
+
+            return $this->successResponse([
+                'user' => $user,
+                'token' => $token,
+            ], 'Login berhasil');
+
+        } catch (\Exception $e) {
+            return $this->serverErrorResponse($e->getMessage());
         }
 
-        $user->tokens()->delete();
-        $token = $user->createToken('auth_token')->plainTextToken;
-
-        return $this->successResponse([
-            'user' => $user,
-            'token' => $token,
-        ], 'Login berhasil');
     }
 
     public function logout(Request $request) {
-        $request->user()->currentAccessToken()->delete();
+        try {
+            $request->user()->currentAccessToken()->delete();
 
-        return $this->deletedResponse('Logout berhasil');
+            return $this->deletedResponse('Logout berhasil');
+
+        } catch (\Exception $e) {
+            return $this->serverErrorResponse($e->getMessage());
+        }
     }
 
     public function me(Request $request) {
-        $user = $request->user();
+        try {
+            $user = $request->user();
 
-        if ($user->role === 'siswa') {
-            $user->load('siswa.jurusan');
+            if ($user->role === 'siswa') {
+                $user->load('siswa.jurusan');
+            }
+
+            return $this->successResponse($user);
+
+        } catch (\Exception $e) {
+            return $this->serverErrorResponse($e->getMessage());
         }
-
-        return $this->successResponse($user);
     }
 }

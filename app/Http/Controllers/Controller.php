@@ -26,4 +26,10 @@ abstract class Controller
             'message' => $message
         ], $code);
     }
+
+    protected function serverErrorResponse(string $message = 'Terjadi kesalah pada server', int $code = 500) {
+        return response()->json([
+            "message" => $message,
+        ], $code);
+    }
 }
