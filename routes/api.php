@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\JurusanController;
 use App\Http\Controllers\UserController;
 
@@ -9,5 +10,16 @@ use App\Http\Controllers\UserController;
     return $request->user();
 })->middleware('auth:sanctum'); */
 
-Route::apiResource('jurusan', JurusanController::class);
-Route::apiResource('user', UserController::class);
+Route::prefix('auth')->group(function () {
+    Route::post('register', [AuthController::class, 'register']);
+    Route::post('login', [AuthController::class, 'login']);
+});
+
+Route::middleware('auth:sanctum')->group(function() {
+    Route::post('auth/logout', [AuthController::class, 'logout']);
+    Route::get('auth/me', [AuthController::class, 'me']);
+
+    Route::apiResource('jurusan', JurusanController::class);
+    Route::apiResource('user', UserController::class);
+});
+
