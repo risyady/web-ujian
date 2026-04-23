@@ -24,6 +24,13 @@ class DatabaseSeeder extends Seeder
             'email' => 'test@example.com',
         ]); */
 
+        User::factory()->create([
+            'name' => 'risyad',
+            'email' => 'ibrahimrisyad28@gmail.com',
+            'password' => '00000000',
+            'role' => 'admin',
+        ]);
+
         User::factory()->count(5)->create();
 
         Jurusan::factory()->count(3)->create();
