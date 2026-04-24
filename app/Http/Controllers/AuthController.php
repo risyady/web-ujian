@@ -15,8 +15,8 @@ class AuthController extends Controller
             'email' => 'required|email|unique:users',
             'password' => 'required|min:8|confirmed',
             'role' => 'required|in:admin,guru,siswa',
-            'nisn' => 'required_if:role,siswa|string|unique:siswas,nisn,' . $user->id . ',user_id',
-            'jurusan_id' => 'required_if:role,siswa|exists:jurusans,id'
+            'nisn' => 'required_if:role,siswa|string|unique:siswas,nisn,',
+            'jurusan_id' => 'required_if:role,siswa|exists:jurusans,id',
         ]);
 
         try {
@@ -43,7 +43,7 @@ class AuthController extends Controller
             ], 'Registrasi berhasil');
 
         } catch (\Exception $e) {
-            return this->serverErrorResponse($e->getMessage());
+            return $this->serverErrorResponse($e->getMessage());
         }
     }
 

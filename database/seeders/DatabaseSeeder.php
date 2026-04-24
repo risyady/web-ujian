@@ -24,16 +24,35 @@ class DatabaseSeeder extends Seeder
             'email' => 'test@example.com',
         ]); */
 
+        Jurusan::factory()->count(3)->create();
+
         User::factory()->create([
-            'name' => 'risyad',
-            'email' => 'ibrahimrisyad28@gmail.com',
-            'password' => '00000000',
+            'name' => 'Test Admin',
+            'email' => 'admin@example.com',
+            'password' => '12345678',
             'role' => 'admin',
         ]);
 
-        User::factory()->count(5)->create();
+        User::factory()->create([
+            'name' => 'Test Guru',
+            'email' => 'guru@example.com',
+            'password' => '12345678',
+            'role' => 'guru',
+        ]);
 
-        Jurusan::factory()->count(3)->create();
+        $user = User::factory()->create([
+            'name' => 'Test Siswa',
+            'email' => 'siswa@example.com',
+            'password' => '12345678',
+            'role' => 'siswa',
+        ]);
+
+        Siswa::factory()->create([
+            'user_id' => $user->id,
+            'jurusan_id' => Jurusan::inRandomOrder()->first()->id,
+        ]);
+
+        User::factory()->count(5)->create();
 
         User::factory()->setRole('siswa')->count(10)->create()->each(function ($user) {
             Siswa::factory()->create([

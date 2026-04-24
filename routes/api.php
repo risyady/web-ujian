@@ -19,7 +19,9 @@ Route::middleware('auth:sanctum')->group(function() {
     Route::post('auth/logout', [AuthController::class, 'logout']);
     Route::get('auth/me', [AuthController::class, 'me']);
 
-    Route::apiResource('jurusan', JurusanController::class);
-    Route::apiResource('user', UserController::class);
+    Route::middleware('role:admin')->group(function() {
+        Route::apiResource('user', UserController::class);
+        Route::apiResource('jurusan', JurusanController::class);
+    });
 });
 
