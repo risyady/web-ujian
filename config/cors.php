@@ -2,8 +2,8 @@ return [
     'paths' => ['api/*'],
     'allowed_methods' => ['*'],
     'allowed_origins' => [
-        'http://localhost:3000',        // dev React
-        'https://sintoga-learn.vercel.app', // production
+        'http://localhost:3000',
+        'https://sintoga-learn.vercel.app',
     ],
     'allowed_headers' => ['*'],
     'supports_credentials' => true,
