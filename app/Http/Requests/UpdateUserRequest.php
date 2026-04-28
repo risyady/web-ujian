@@ -28,10 +28,9 @@ class UpdateUserRequest extends FormRequest
         return [
             'nama' => 'sometimes|string|max:150',
             'email' => [
-                'sometimes,
-                email,
-                unique:users,
-                max:150',
+                'sometimes',
+                'email',
+                'max:150',
                 Rule::unique('users', 'email')->ignore($user->id),
             ],
             'password' => 'sometimes|string|min:6',
