@@ -2,52 +2,37 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreUserRequest;
+use App\Http\Requests\UpdateUserRequest;
 use App\Models\User;
-use App\Models\Siswa;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
+
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $users = User::with('siswa.jurusan')->latest()->paginate(10);
+        $currentUser = auth()->user();
+
+        $users = $this->querySelectUser($currentUser->role);
         return $this->successResponse($users);
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreUserRequest $request)
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|unique:users',
-            'password' => 'required|string|min:8',
-            'role' => 'required|string|in:admin,guru,siswa',
-            'nisn' => 'required_if:role,siswa|unique:siswa,nisn',
-            'jurusan_id' => 'required_if:role,siswa|exists:jurusan,id',
-        ]);
+        $data = $request->validated();    
+        $data['password'] = Hash::make($data['password']);
 
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'role' => $request->role,
-        ]);
-
-        if ($request->role === 'siswa') {
-            Siswa::create([
-                'user_id' => $user->id,
-                'nisn' => $request->nisn,
-                'jurusan_id' => $request->jurusan_id,
-            ]);
-        }
-
-        return $this->createdResponse($this->loadUserData($user), 'User berhasil dibuat');
+        $user = User::create($data);
+        
+        return $this->createdResponse($this->loadJurusanSiswa($user), 'User berhasil dibuat');
     }
 
     /**
@@ -55,45 +40,20 @@ class UserController extends Controller
      */
     public function show(User $user)
     {
-        return $this->successResponse($this->loadUserData($user));
+        return $this->successResponse($this->loadJurusanSiswa($user));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, User $user)
+    public function update(UpdateUserRequest $request, User $user)
     {
-        $request->validate([
-            'name' => 'sometimes|string|max:255',
-            'email' => 'sometimes|email|unique:users,email,' . $user->id,
-            'password' => 'sometimes|string|min:8',
-            'role' => 'sometimes|in:admin,guru,siswa',
-            'nisn' => 'required_if:role,siswa|string|unique:siswas,nisn,' . $user->id . ',user_id',
-            'jurusan_id' => 'required_if:role,siswa|exists:jurusans,id'
-        ]);
+        $data = $request->validated();
+        $data['password'] ? Hash::make($data['password']) :$data['password'];
 
-        $user->update([
-            'name' => $request->name ?? $user->name,
-            'email' => $request->email ?? $user->email,
-            'password' => $request->password ? Hash::make($request->password) : $user->password,
-            'role' => $request->role ?? $user->role,
-        ]);
+        $user->update($data);
 
-        if ($user->role === 'siswa') {
-            Siswa::updateOrCreate(
-                ['user_id' => $user->id],
-                [
-                    'nisn' => $request->nisn ?? optional($user->siswa)->nisn,
-                    'jurusan_id' => $request->jurusan_id ?? optional($user->siswa)->jurusan_id,
-                ]
-            );
-        }
-
-        if ($request->role && $request->role !== 'siswa') {
-            $user->siswa()->delete();
-        }
-
-        return $this->successResponse($this->loadUserData($user), 'User berhasil diperbarui');
+        return $this->successResponse($this->loadJurusanSiswa($user), 'User berhasil diperbarui');
     }
 
     /**
@@ -105,10 +65,16 @@ class UserController extends Controller
         return $this->deletedResponse('User berhasil dihapus');
     }
 
-    private function loadUserData(User $user): User
+    private function querySelectUser($role) {
+        return User::with('jurusan')->when($role !== 'superadmin', function ($query) {
+            $query->where('role', '!=', 'admin')->where('role', '!=', 'superadmin');
+        })->latest()->paginate(10);
+    }
+    
+    private function loadJurusanSiswa(User $user): User
     {
         if ($user->role === 'siswa') {
-            return $user->load('siswa.jurusan');
+            return $user->load('jurusan');
         }
 
         return $user;

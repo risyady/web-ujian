@@ -13,7 +13,7 @@ class AuthController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users',
-            'password' => 'required|min:8|confirmed',
+            'password' => 'required|min:6|confirmed',
             'role' => 'required|in:admin,guru,siswa',
             'nisn' => 'required_if:role,siswa|string|unique:siswas,nisn,',
             'jurusan_id' => 'required_if:role,siswa|exists:jurusans,id',
@@ -87,11 +87,7 @@ class AuthController extends Controller
 
     public function me(Request $request) {
         try {
-            $user = $request->user();
-
-            if ($user->role === 'siswa') {
-                $user->load('siswa.jurusan');
-            }
+            $user = $request->user()->load('jurusan');
 
             return $this->successResponse($user);
 

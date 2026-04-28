@@ -16,6 +16,6 @@ class Jurusan extends Model
     ];
 
     public function siswa() {
-        return $this->hasMany(Siswa::class, 'jurusan_id');
+        return $this->hasMany(User::class, 'jurusan_id')->where('role', 'siswa');
     }
 }
