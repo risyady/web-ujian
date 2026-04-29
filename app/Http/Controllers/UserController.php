@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
+use App\Imports\UsersImport;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Maatwebsite\Excel\Excel;
 
 class UserController extends Controller
 {
@@ -33,6 +35,20 @@ class UserController extends Controller
         $user = User::create($data);
         
         return $this->createdResponse($this->loadJurusanSiswa($user), 'User berhasil dibuat');
+    }
+
+    public function bulkStore(Request $request) {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls'
+        ]);
+
+        $import = new UsersImport;
+        Excel::import($import, $request->file('file'));
+
+        return $this->successResponse([
+            'failures' => $import->failures,
+            'errors' => $import->errors,
+        ], 'Import selesai');
     }
 
     /**
