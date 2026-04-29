@@ -8,7 +8,7 @@ use App\Imports\UsersImport;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use Maatwebsite\Excel\Excel;
+use Maatwebsite\Excel\Facades\Excel;
 
 class UserController extends Controller
 {
@@ -46,8 +46,8 @@ class UserController extends Controller
         Excel::import($import, $request->file('file'));
 
         return $this->successResponse([
-            'failures' => $import->failures,
-            'errors' => $import->errors,
+            'failures' => $import->failures(),
+            'errors' => $import->errors(),
         ], 'Import selesai');
     }
 

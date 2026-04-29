@@ -22,7 +22,7 @@ Route::middleware('auth:sanctum')->group(function() {
     Route::middleware('role:admin,superadmin')->group(function() {
         Route::apiResource('user', UserController::class);
         Route::apiResource('jurusan', JurusanController::class);
-        Route::post('user/bulk-store', [UserController::class, 'bulk-store']);
+        Route::post('user/bulk-store', [UserController::class, 'bulkStore']);
     });
 });
 
