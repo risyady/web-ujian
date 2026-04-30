@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 abstract class Controller
 {
+    use \Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+
     protected function successResponse($data, string $message = 'Berhasil', int $code = 200) {
         return response()->json([
             'message' => $message,

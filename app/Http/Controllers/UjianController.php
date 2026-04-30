@@ -14,7 +14,13 @@ class UjianController extends Controller
      */
     public function index()
     {
-        $ujians = Ujian::with('guru')->latest()->paginate(10);
+        $this->authorize('viewAny', Ujian::class);
+
+        $user = auth()->user();
+
+        $ujians = Ujian::with('guru')->when($user->isGuru(), function ($query) use ($user) {
+                $query->where('guru_id', $user->id);
+            })->latest()->paginate(10);
 
         return $this->successResponse($ujians);
     }
@@ -24,7 +30,13 @@ class UjianController extends Controller
      */
     public function store(StoreUjianRequest $request)
     {
-        //
+        $currentGuru = auth()->user();
+        $data = $request->validated();
+        $data['guru_id'] = $currentGuru->id;
+        
+        $ujian = Ujian::create($data);
+        
+        return $this->createdResponse($ujian->load('guru'), 'Ujian berhasil dibuat');
     }
 
     /**
@@ -32,7 +44,8 @@ class UjianController extends Controller
      */
     public function show(Ujian $ujian)
     {
-        //
+        $this->authorize('view', $ujian);
+        return $this->successResponse($ujian->load('guru'));
     }
 
     /**
@@ -40,7 +53,11 @@ class UjianController extends Controller
      */
     public function update(UpdateUjianRequest $request, Ujian $ujian)
     {
-        //
+        $data = $request->validated();
+
+        $ujian->update($data);
+
+        return $this->successResponse($ujian->load('guru'), 'Ujian berhasil diperbarui');
     }
 
     /**
@@ -48,6 +65,8 @@ class UjianController extends Controller
      */
     public function destroy(Ujian $ujian)
     {
-        //
+        $ujian->delete();
+
+        return $this->deletedResponse('Ujian berhasil dihapus');
     }
 }

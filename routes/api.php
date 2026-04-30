@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\JurusanController;
+use App\Http\Controllers\UjianController;
 use App\Http\Controllers\UserController;
 
 /* Route::get('/user', function (Request $request) {
@@ -24,5 +25,7 @@ Route::middleware('auth:sanctum')->group(function() {
         Route::apiResource('jurusan', JurusanController::class);
         Route::post('user/bulk-store', [UserController::class, 'bulkStore']);
     });
+
+    Route::apiResource('ujian', UjianController::class);
 });
 

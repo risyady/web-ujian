@@ -24,7 +24,6 @@ class StoreUjianRequest extends FormRequest
     {
         return [
             'judul_ujian' => 'required|string|max:150',
-            'guru_id' => 'required|exists:users,id',
             'kelas' => 'required|string|max:15',
             'tahun_ajar' => 'required|string|max:10',
             'tipe_ujian' => 'required|string|in:harian,sts,uts,uas',

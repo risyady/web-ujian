@@ -27,7 +27,7 @@ class StoreUserRequest extends FormRequest
             'email' => 'required|email|unique:users,email|max:150',
             'password' => 'required|string|min:6',
             'role' => 'required|string|in:admin,guru,siswa',
-            'nisn' => 'required_if:role,siswa|string|unique:users|max:15',
+            'nisn' => 'required_if:role,siswa|string|unique:users,nisn|max:15',
             'jurusan_id' => 'required_if:role,siswa|exists:jurusans,id',
         ];
     }
