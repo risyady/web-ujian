@@ -52,4 +52,8 @@ class User extends Authenticatable
     public function jurusan() {
         return $this->belongsTo(Jurusan::class, 'jurusan_id');
     }
+
+    public function ujian() {
+        return $this->hasMany(Ujian::class, 'guru_id');
+    }
 }

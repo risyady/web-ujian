@@ -17,14 +17,16 @@ class JurusanFactory extends Factory
      */
     public function definition(): array
     {
+        $jurusan = $this->faker->randomElement([
+            'Teknik Informatika',
+            'Sistem Informasi',
+            'Teknik Komputer',
+            'Manajemen Informatika',
+            'Rekayasa Perangkat Lunak',
+        ]);
+
         return [
-            'nama_jurusan' => $this->faker->randomElement([
-                'Teknik Informatika',
-                'Sistem Informasi',
-                'Teknik Komputer',
-                'Manajemen Informatika',
-                'Rekayasa Perangkat Lunak',
-            ]),
+            'nama_jurusan' => $jurusan,
             'kode_jurusan' => $this->faker->unique()->regexify('[A-Z]{3}[0-9]{3}'),
         ];
     }
