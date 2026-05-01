@@ -19,11 +19,13 @@ Route::prefix('auth')->group(function () {
 Route::middleware('auth:sanctum')->group(function() {
     Route::post('auth/logout', [AuthController::class, 'logout']);
     Route::get('auth/me', [AuthController::class, 'me']);
+    Route::put('auth/me/edit', [AuthController::class, 'editProfile']);
 
     Route::middleware('role:admin,superadmin')->group(function() {
         Route::apiResource('user', UserController::class);
         Route::apiResource('jurusan', JurusanController::class);
         Route::post('user/bulk-store', [UserController::class, 'bulkStore']);
+        Route::get('user/{user}/reset-password', [UserController::class, 'resetPassword']);
     });
 
     Route::apiResource('ujian', UjianController::class);

@@ -64,8 +64,12 @@ class UserController extends Controller
      */
     public function update(UpdateUserRequest $request, User $user)
     {
+        $this->authorize('update', $user);
         $data = $request->validated();
-        $data['password'] ? Hash::make($data['password']) :$data['password'];
+
+        if (isset($data['password'])) {
+            $data['password'] = Hash::make($data['password']);
+        }
 
         $user->update($data);
 
@@ -79,6 +83,11 @@ class UserController extends Controller
     {
         $user->delete();
         return $this->deletedResponse('User berhasil dihapus');
+    }
+
+    public function resetPassword(User $user) {
+        $user->update(['password' => Hash::make('123456'),]);
+        return $this->successResponse($this->loadJurusanSiswa($user), 'password berhasil direset');
     }
 
     private function querySelectUser($role) {

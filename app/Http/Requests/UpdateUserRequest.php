@@ -33,7 +33,6 @@ class UpdateUserRequest extends FormRequest
                 'max:150',
                 Rule::unique('users', 'email')->ignore($user->id),
             ],
-            'password' => 'sometimes|string|min:6',
             'role' => 'sometimes|string|in:admin,guru,siswa',
             'nisn' => [
                 'sometimes',
