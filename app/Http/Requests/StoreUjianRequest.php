@@ -28,7 +28,7 @@ class StoreUjianRequest extends FormRequest
             'tahun_ajar' => 'required|string|max:10',
             'tipe_ujian' => 'required|string|in:harian,sts,uts,uas',
             'semester' => 'required|string|in:ganjil,genap',
-            'kode_ujian' => 'nullable|string|max:6|unique:ujians, kode_ujian',
+            'kode_ujian' => 'nullable|string|max:6|unique:ujians,kode_ujian',
             'durasi_menit' => 'required|integer',
             'tanggal_ujian' => 'required|date',
             'waktu_mulai' => 'required|date_format:H:i:s',
