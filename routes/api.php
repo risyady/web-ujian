@@ -5,12 +5,9 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\JurusanController;
 use App\Http\Controllers\PengaturanUjianController;
+use App\Http\Controllers\SoalController;
 use App\Http\Controllers\UjianController;
 use App\Http\Controllers\UserController;
-
-/* Route::get('/user', function (Request $request) {
-    return $request->user();
-})->middleware('auth:sanctum'); */
 
 Route::prefix('auth')->group(function () {
     Route::post('register', [AuthController::class, 'register']);
@@ -33,5 +30,7 @@ Route::middleware('auth:sanctum')->group(function() {
 
     Route::get('ujian/{ujian}/pengaturan', [PengaturanUjianController::class, 'show']);
     Route::put('ujian/{ujian}/pengaturan', [PengaturanUjianController::class, 'update']);
+
+    Route::apiResource('ujian.soal', SoalController::class);
 });
 

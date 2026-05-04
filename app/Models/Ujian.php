@@ -32,4 +32,8 @@ class Ujian extends Model
     public function pengaturan() {
         return $this->hasOne(PengaturanUjian::class, 'ujian_id');
     }
+
+    public function soal() {
+        return $this->hasMany(Ujian::class, 'ujian_id');
+    }
 }

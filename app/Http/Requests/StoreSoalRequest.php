@@ -12,7 +12,7 @@ class StoreSoalRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return in_array(auth()->user()->role, ['guru',]);
+        return in_array(auth()->user()->role, ['guru', 'superadmin']);
     }
 
     /**
