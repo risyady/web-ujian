@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('soals', function (Blueprint $table) {
             $table->id();
             $table->foreignId('ujian_id')->constrained("ujians")->onDelete('cascade');
-            $table->text('teks_soal')->index();
+            $table->text('teks_soal');
             $table->enum('tipe_soal', [
                 'objektif', 
                 'ganda_kompleks', 
