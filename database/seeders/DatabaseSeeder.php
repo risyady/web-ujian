@@ -57,6 +57,6 @@ class DatabaseSeeder extends Seeder
 
         User::factory()->count(10)->create();
 
-        Ujian::factory()->count(5)->create();
+        Ujian::factory()->count(5)->create()->each(fn($ujian) => $ujian->pengaturan()->create());
     }
 }

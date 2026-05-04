@@ -28,4 +28,8 @@ class Ujian extends Model
     public function guru() {
         return $this->belongsTo(User::class, 'guru_id');
     }
+
+    public function pengaturan() {
+        return $this->hasOne(PengaturanUjian::class, 'ujian_id');
+    }
 }

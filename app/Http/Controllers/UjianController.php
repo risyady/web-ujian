@@ -30,11 +30,14 @@ class UjianController extends Controller
      */
     public function store(StoreUjianRequest $request)
     {
-        $currentGuru = auth()->user();
+        $currentUser = auth()->user()->id;
+
         $data = $request->validated();
-        $data['guru_id'] = $currentGuru->id;
+        $data['guru_id'] = $currentUser;
         
         $ujian = Ujian::create($data);
+
+        $ujian->pengaturan()->create([]);
         
         return $this->createdResponse($ujian->load('guru'), 'Ujian berhasil dibuat');
     }

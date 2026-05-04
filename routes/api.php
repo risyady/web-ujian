@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\JurusanController;
+use App\Http\Controllers\PengaturanUjianController;
 use App\Http\Controllers\UjianController;
 use App\Http\Controllers\UserController;
 
@@ -29,5 +30,8 @@ Route::middleware('auth:sanctum')->group(function() {
     });
 
     Route::apiResource('ujian', UjianController::class);
+
+    Route::get('ujian/{ujian}/pengaturan', [PengaturanUjianController::class, 'show']);
+    Route::put('ujian/{ujian}/pengaturan', [PengaturanUjianController::class, 'update']);
 });
 
