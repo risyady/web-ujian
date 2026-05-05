@@ -23,7 +23,6 @@ class StoreSoalRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'ujian_id' => 'required|exists:ujians,id',
             'teks_soal' => 'required|string',
             'tipe_soal' => 'required|in:objektif,ganda_kompleks,menjodohkan,isian,essay',
             'path_gambar' => 'nullable|string',

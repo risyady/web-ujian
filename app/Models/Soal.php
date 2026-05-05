@@ -18,10 +18,10 @@ class Soal extends Model
     ];
 
     public function ujian() {
-        return $this->belongsTo(Ujian::class);
+        return $this->belongsTo(Ujian::class, 'ujian_id');
     }
 
     public function pilihanJawaban() {
-        return $this->hasMany(PilihanJawaban::class);
+        return $this->hasMany(PilihanJawaban::class, 'soal_id');
     }
 }
