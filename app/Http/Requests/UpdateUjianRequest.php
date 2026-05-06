@@ -33,6 +33,7 @@ class UpdateUjianRequest extends FormRequest
             'tanggal_ujian' => 'sometimes|date',
             'waktu_mulai' => 'sometimes|date_format:H:i:s',
             'waktu_selesai' => 'sometimes|date_format:H:i:s|after:waktu_mulai',
+            'status' => 'sometimes|string|in:draft,published,ongoing,finished'
         ];
     }
 }

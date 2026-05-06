@@ -2,8 +2,8 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Override;
 
 class StoreSoalRequest extends FormRequest
 {
@@ -12,7 +12,17 @@ class StoreSoalRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return in_array(auth()->user()->role, ['guru', 'superadmin']);
+        return in_array(auth()->user->role, ['guru', 'superadmin']);
+    }
+
+    #[Override]
+    protected function prepareForValidation()
+    {
+        if ($this->has('pilihan_jawaban') && is_string($this->pilihan_jawaban)) {
+            $this->merge([
+                'pilihan_jawaban' => json_decode($this->pilihan_jawaban, true)
+            ]);
+        }
     }
 
     /**
