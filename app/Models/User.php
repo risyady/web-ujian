@@ -55,9 +55,9 @@ class User extends Authenticatable
     public function ujian() {
         return $this->hasMany(Ujian::class, 'guru_id');
     }
-
     public function isAdmin() {
         return in_array($this->role, ['admin', 'superadmin']);
     }
     public function isGuru() { return $this->role === 'guru'; }
+    public function isSiswa() { return $this->role === 'siswa'; }
 }

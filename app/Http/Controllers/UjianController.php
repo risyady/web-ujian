@@ -56,6 +56,8 @@ class UjianController extends Controller
      */
     public function update(UpdateUjianRequest $request, Ujian $ujian)
     {
+        $this->authorize('update', $ujian);
+
         $data = $request->validated();
 
         $ujian->update($data);

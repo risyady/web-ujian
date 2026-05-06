@@ -6,7 +6,6 @@ use App\Http\Requests\StoreSoalRequest;
 use App\Http\Requests\UpdateSoalRequest;
 use App\Models\Soal;
 use App\Models\Ujian;
-use Illuminate\Http\Request;
 
 class SoalController extends Controller
 {
@@ -31,6 +30,10 @@ class SoalController extends Controller
 
         $data = $request->validated();
         $data['ujian_id'] = $ujian->id;
+
+        if($request->hasFile('path_gambar')) {
+            $data['path_gambar'] = $this->uploadImage($request->file('path_gambar'));
+        }
 
         $soal = Soal::create($data);
 
@@ -63,6 +66,16 @@ class SoalController extends Controller
 
         $data = $request->validated();
 
+        if ($request->hasFile('path_gambar')) {
+            $this->deleteImage($soal->path_gambar);
+            $data['path_gambar'] = $this->uploadImage($request->file('path_gambar'));
+        }
+
+        if ($request->input('hapus_gambar')) {
+            $this->deleteImage($soal->path_gambar);
+            $data['path_gambar'] = null;
+        }
+
         $soal->update($data);
 
         if (isset($data['pilihan_jawaban'])) {
@@ -83,6 +96,7 @@ class SoalController extends Controller
     {
         $this->authorize('delete', $soal);
 
+        $this->deleteImage($soal->path_gambar);
         $soal->delete();
 
         return $this->successResponse('Soal berhasil dihapus');

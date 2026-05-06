@@ -33,6 +33,8 @@ class UpdateSoalRequest extends FormRequest
             'pilihan_jawaban.*.teks_pasangan' => 'sometimes|nullable|string',
             'pilihan_jawaban.*.persentase_nilai' => 'sometimes|nullable|integer|min:0|max:100|exclude_if:tipe_soal,isian|exclude_if:tipe_soal,essay',
             'pilihan_jawaban.*.is_true' => 'sometimes|nullable|boolean',
+
+            'hapus_gambar' => 'nullable|boolean'
         ];
     }
 }

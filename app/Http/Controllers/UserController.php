@@ -6,6 +6,7 @@ use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
 use App\Imports\UsersImport;
 use App\Models\User;
+use App\Models\PengaturanAdmin;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Maatwebsite\Excel\Facades\Excel;
@@ -86,7 +87,9 @@ class UserController extends Controller
     }
 
     public function resetPassword(User $user) {
-        $user->update(['password' => Hash::make('123456'),]);
+        $defaultPassword = PengaturanAdmin::ambil('default_password') ?? '123456';
+
+        $user->update(['password' => Hash::make($defaultPassword)]);
         return $this->successResponse($this->loadJurusanSiswa($user), 'password berhasil direset');
     }
 

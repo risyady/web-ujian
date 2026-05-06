@@ -2,9 +2,21 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\Storage;
+
 abstract class Controller
 {
     use \Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+
+    protected function uploadImage($file, string $folder = 'soal'): string {
+        return $file->store($folder, 'public');
+    }
+
+    protected function deleteImage(?string $path): void {
+        if ($path && Storage::disk('public')->exists($path)) {
+            Storage::disk('public')->delete($path);
+        }
+    }
 
     protected function successResponse($data, string $message = 'Berhasil', int $code = 200) {
         return response()->json([

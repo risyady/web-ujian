@@ -25,7 +25,7 @@ class StoreSoalRequest extends FormRequest
         return [
             'teks_soal' => 'required|string',
             'tipe_soal' => 'required|in:objektif,ganda_kompleks,menjodohkan,isian,essay',
-            'path_gambar' => 'nullable|string',
+            'path_gambar' => 'nullable|image|mimes:png,jpg,jpeg|max:2048',
 
             'pilihan_jawaban' => 'nullable|array',
             'pilihan_jawaban.*.teks_pilihan' => 'nullable|string',

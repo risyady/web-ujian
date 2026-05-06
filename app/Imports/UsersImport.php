@@ -3,6 +3,7 @@
 namespace App\Imports;
 
 use App\Models\Jurusan;
+use App\Models\PengaturanAdmin;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Maatwebsite\Excel\Concerns\SkipsErrors;
@@ -18,10 +19,12 @@ class UsersImport implements ToModel, WithHeadingRow, WithValidation, SkipsOnErr
     use SkipsErrors, SkipsFailures;
     
     public array $jurusans = [];
+    public string $defaultPassword = '';
 
     public function __construct()
     {
         $this->jurusans = Jurusan::pluck('id', 'kode_jurusan')->toArray();
+        $this->defaultPassword = PengaturanAdmin::ambil('default_password');
     }
 
     /**
@@ -34,7 +37,7 @@ class UsersImport implements ToModel, WithHeadingRow, WithValidation, SkipsOnErr
         return new User([
             'nama' => $row['nama'],
             'email' => $row['email'],
-            'password' => Hash::make('123456'),
+            'password' => Hash::make($this->defaultPassword),
             'role' => $row['role'],
             'nisn' => isset($row['nisn']) ? (string) $row['nisn'] : null,
             'jurusan_id' => $this->jurusans[$row['kode_jurusan']] ?? null,
