@@ -24,7 +24,7 @@ class NilaiController extends Controller
         ]);
     }
 
-    public function inputFillinBlank(Request $request, SiswaUjian $siswaUjian)
+    public function inputFillInBlank(Request $request, SiswaUjian $siswaUjian)
     {
         $this->authorize('update', $siswaUjian);
 
