@@ -14,7 +14,7 @@ class Soal extends Model
         'ujian_id',
         'teks_soal',
         'tipe_soal',
-        'jalur_gambar',
+        'path_gambar',
     ];
 
     public function ujian() {
