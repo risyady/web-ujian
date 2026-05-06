@@ -9,13 +9,20 @@ abstract class Controller
     use \Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
     protected function uploadImage($file, string $folder = 'soal'): string {
-        return $file->store($folder, 'public');
+        $path = $file->store($folder, 's3');
+        Storage::disk('s3')->setVisibility($path, 'public');
+        return $$path;
     }
 
     protected function deleteImage(?string $path): void {
-        if ($path && Storage::disk('public')->exists($path)) {
-            Storage::disk('public')->delete($path);
+        if ($path && Storage::disk('s3')->exists($path)) {
+            Storage::disk('s3')->delete($path);
         }
+    }
+
+    protected function urlGambar(?string $path): ?string {
+        if (!$path) return null;
+        return Storage::disk('s3')->url($path);
     }
 
     protected function successResponse($data, string $message = 'Berhasil', int $code = 200) {
