@@ -55,3 +55,18 @@ Route::middleware('auth:sanctum')->group(function() {
         Route::put('ujian/{siswaUjian}/isian', [NilaiController::class, 'inputFillInBlank']);
     });
 });
+
+Route::get('test-s3', function () {
+    try {
+        Storage::disk('s3')->put('test.txt', 'Hello Tigris!', 'public'); // 👈 tambah public
+        $url = Storage::disk('s3')->url('test.txt');
+        return response()->json([
+            'message' => 'Berhasil!',
+            'url'     => $url,
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'message' => 'Gagal: ' . $e->getMessage(),
+        ], 500);
+    }
+});
