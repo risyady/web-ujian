@@ -21,6 +21,9 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 WORKDIR /app
 COPY . .
 
-RUN composer install --optimize-autoloader --no-interaction
+RUN composer install --optimize-autoloader --no-interaction --no-dev
+RUN php artisan storage:link || true
+RUN chown -R www-data:www-data storage bootstrap/cache
 
-CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8080"]
+EXPOSE 8080
+CMD php artisan serve --host=0.0.0.0 --port=${PORT:-8080}

@@ -26,7 +26,7 @@ class PengaturanAdminController extends Controller
 
         $request->validate([
             'pengaturan' => 'required|array',
-            'pengaturan.*.key' => 'required|exists:pengaturan_aplikasis,key',
+            'pengaturan.*.key' => 'required|exists:pengaturan_admins,key',
             'pengaturan.*.value' => 'nullable|string'
         ]);
 
