@@ -21,7 +21,7 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 WORKDIR /app
 COPY . .
 
-RUN composer install --optimize-autoloader --no-interaction --no-dev
+RUN composer install --optimize-autoloader --no-interaction
 RUN php artisan storage:link || true
 RUN chown -R www-data:www-data storage bootstrap/cache
 

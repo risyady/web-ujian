@@ -22,7 +22,7 @@ class JurusanFactory extends Factory
             'Sistem Informasi',
             'Teknik Komputer',
             'Manajemen Informatika',
-            'Rekayasa Perangkat Lunak',
+            'Rekayasa Perangkat Lunak'
         ]);
 
         return [
