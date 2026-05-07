@@ -59,7 +59,7 @@ Route::middleware('auth:sanctum')->group(function() {
 Route::get('test-s3', function () {
     try {
         Storage::disk('s3')->put('test.txt', 'Hello Tigris!', 'public'); // 👈 tambah public
-        $url = Storage::disk('s3')->url('test.txt');
+        $url = Storage::disk('s3')->get('test.txt');
         return response()->json([
             'message' => 'Berhasil!',
             'url'     => $url,
