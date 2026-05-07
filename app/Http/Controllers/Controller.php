@@ -9,9 +9,8 @@ abstract class Controller
     use \Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
     protected function uploadImage($file, string $folder = 'soal'): string {
-        $path = $file->store($folder, 's3');
-        Storage::disk('s3')->setVisibility($path, 'public');
-        return $$path;
+        $path = $file->storePublicly($folder, 's3');
+        return $path;
     }
 
     protected function deleteImage(?string $path): void {
