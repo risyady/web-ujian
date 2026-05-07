@@ -12,6 +12,7 @@ use App\Http\Controllers\SiswaUjianController;
 use App\Http\Controllers\SoalController;
 use App\Http\Controllers\UjianController;
 use App\Http\Controllers\UserController;
+use Illuminate\Support\Facades\Storage;
 
 Route::prefix('auth')->group(function () {
     Route::post('register', [AuthController::class, 'register']);
@@ -55,3 +56,18 @@ Route::middleware('auth:sanctum')->group(function() {
     });
 });
 
+// routes/api.php — hapus setelah test
+Route::get('test-s3', function () {
+    try {
+        Storage::disk('s3')->put('test.txt', 'Hello Tigris!');
+        $url = Storage::disk('s3')->url('test.txt');
+        return response()->json([
+            'message' => 'Berhasil!',
+            'url'     => $url,
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'message' => 'Gagal: ' . $e->getMessage(),
+        ], 500);
+    }
+});
