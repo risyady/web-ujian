@@ -22,7 +22,7 @@ class PengaturanAdminController extends Controller
      */
     public function update(Request $request)
     {
-        $this->authorize('update', PengaturanAdmin::class);
+        $this->authorize('update', PengaturanAdmin::first());
 
         $request->validate([
             'pengaturan' => 'required|array',
