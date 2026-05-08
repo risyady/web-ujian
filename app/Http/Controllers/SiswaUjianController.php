@@ -30,7 +30,7 @@ class SiswaUjianController extends Controller
         }
 
         $hasRedeem = SiswaUjian::where('ujian_id', $ujian->id)
-            ->where('user_id', $user->id)
+            ->where('siswa_id', $user->id)
             ->exists();
 
         if ($hasRedeem) {
@@ -49,7 +49,7 @@ class SiswaUjianController extends Controller
 
         $siswaUjian = SiswaUjian::create([
             'ujian_id' => $ujian->id,
-            'user_id' => $user->id,
+            'siswa_id' => $user->id,
             'waktu_mulai' => now(),
             'status' => 'pengerjaan',
             'urutan_soal' => $soals->pluck('id')
@@ -70,7 +70,7 @@ class SiswaUjianController extends Controller
     public function submit(SiswaUjian $siswaUjian) {
         $user = auth()->user();
 
-        if ($siswaUjian->user_id !== $user->id) {
+        if ($siswaUjian->siswa_id !== $user->id) {
             return $this->errorResponse('Unauthorized.', 403);
         }
 
