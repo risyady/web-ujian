@@ -26,7 +26,7 @@ class UpdateSoalRequest extends FormRequest
             'ujian_id' => 'sometimes|exists:ujians,id',
             'teks_soal' => 'sometimes|string',
             'tipe_soal' => 'sometimes|in:objektif,ganda_kompleks,menjodohkan,isian,essay',
-            'path_gambar' => 'nullable|string',
+            'path_gambar' => 'nullable|file|mimes:png,jpg,jpeg|max:2048',
 
             'pilihan_jawaban' => 'sometimes|nullable|array',
             'pilihan_jawaban.*.teks_pilihan' => 'sometimes|nullable|string',
