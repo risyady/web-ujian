@@ -36,4 +36,8 @@ class Ujian extends Model
     public function soal() {
         return $this->hasMany(Soal::class, 'ujian_id');
     }
+
+    public function siswaUjian() {
+        return $this->hasMany(SiswaUjian::class, 'ujian_id');
+    }
 }

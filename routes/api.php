@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\HasilUjianController;
 use App\Http\Controllers\JawabanSiswaController;
 use App\Http\Controllers\JurusanController;
 use App\Http\Controllers\NilaiController;
@@ -15,7 +16,6 @@ use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Storage;
 
 Route::prefix('auth')->group(function () {
-    Route::post('register', [AuthController::class, 'register']);
     Route::post('login', [AuthController::class, 'login']);
 });
 
@@ -53,20 +53,11 @@ Route::middleware('auth:sanctum')->group(function() {
         
         Route::put('ujian/{siswaUjian}/essay', [NilaiController::class, 'inputEssay']);
         Route::put('ujian/{siswaUjian}/isian', [NilaiController::class, 'inputFillInBlank']);
-    });
-});
 
-Route::get('test-s3', function () {
-    try {
-        Storage::disk('s3')->put('test.txt', 'Hello Tigris!', 'public'); // 👈 tambah public
-        $url = Storage::disk('s3')->get('test.txt');
-        return response()->json([
-            'message' => 'Berhasil!',
-            'url'     => $url,
-        ]);
-    } catch (\Exception $e) {
-        return response()->json([
-            'message' => 'Gagal: ' . $e->getMessage(),
-        ], 500);
-    }
+        Route::get('ujian/{ujian}/hasil', [HasilUjianController::class, 'resultEachExam']);
+        Route::get('ujian/{siswaUjian}/detail', [HasilUjianController::class, 'detailJawabanSiswa']);
+    });
+
+    Route::get('ujian/{siswaUjian}/hasil', [HasilUjianController::class, 'siswaResult']);
+
 });
