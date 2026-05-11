@@ -8,6 +8,21 @@ use Illuminate\Http\Request;
 
 class HasilUjianController extends Controller
 {
+    public function siswaHistory(Request $request) {
+        $user = auth()->user();
+
+        if(!$user->isSiswa()) {
+            return $this->errorResponse('Unauthorized', 403);
+        }
+
+        $history = SiswaUjian::where('siswa_id', $user->id)
+            ->with('ujian:id,judul_ujian,tipe_ujian,tanggal_ujian,semester,tahun_ajar')
+            ->latest()
+            ->paginate(10);
+
+        return $this->successResponse($history);
+    }
+
     public function siswaResult(SiswaUjian $siswaUjian) {
         $this->authorize('view', $siswaUjian);
 
@@ -55,10 +70,10 @@ class HasilUjianController extends Controller
     public function resultEachExam(Ujian $ujian) {
         $this->authorize('view', $ujian);
 
-        $siswaUjians = $ujian->siswaUjian()->with('user:id,nama,email')->get()
+        $siswaUjians = $ujian->siswaUjian()->with('siswa')->get()
             ->map(function ($siswaUjian) {
                 return [
-                    'siswa' => $siswaUjian->user,
+                    'siswa' => $siswaUjian->siswa,
                     'status' => $siswaUjian->status,
                     'waktu_mulai' => $siswaUjian->waktu_mulai,
                     'waktu_selesai' => $siswaUjian->waktu_selesai,

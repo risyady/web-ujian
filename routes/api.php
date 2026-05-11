@@ -58,6 +58,7 @@ Route::middleware('auth:sanctum')->group(function() {
         Route::get('ujian/{siswaUjian}/detail', [HasilUjianController::class, 'detailJawabanSiswa']);
     });
 
+    Route::get('ujian/riwayat', [HasilUjianController::class, 'siswaHistory']);
     Route::get('ujian/{siswaUjian}/hasil', [HasilUjianController::class, 'siswaResult']);
 
 });
