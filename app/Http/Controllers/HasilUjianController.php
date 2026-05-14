@@ -26,13 +26,14 @@ class HasilUjianController extends Controller
     public function siswaResult(SiswaUjian $siswaUjian) {
         $this->authorize('view', $siswaUjian);
 
-        if ($siswaUjian->status !== 'dinilai') {
-            return $this->errorResponse('Hasil ujian belum tersedia', 422);
+        if ($siswaUjian->status === 'pengerjaan') {
+            return $this->errorResponse('Ujian belum selesai', 422);
         }
 
         $jawabans = $siswaUjian->jawaban()->with(['soal.pilihanJawaban'])->get()
             ->map(function ($jawaban) {
                 $tipe = $jawaban->soal->tipe_soal;
+                $isManual = in_array($tipe, ['isian', 'essay']);
 
                 return [
                     'soal' => [
@@ -45,10 +46,14 @@ class HasilUjianController extends Controller
                     'jawaban_siswa' => [
                         'id_pilihan_terpilih' => $jawaban->id_pilihan_terpilih,
                         'jawaban_teks' => $jawaban->jawaban_teks,
-                        'pasangan_terpilih' => $jawaban->pasangan_terpilih,
-                        'nilai_manual_guru' => $jawaban->nilai_manual_guru
+                        'pasangan_terpilih' => $jawaban->pasangan_terpilih
                     ],
-                    'nilai' => $jawaban->nilai_manual_guru
+                    'nilai' => $isManual
+                                ? $jawaban->nilai_manual_guru
+                                : $jawaban->nilai_manual_guru,
+                    'sudah_dinilai' => $isManual
+                                        ? !is_null($jawaban->nilai_manual_guru)
+                                        : true
                 ];
             });
 
@@ -146,17 +151,25 @@ class HasilUjianController extends Controller
     private function hitungBreakdown(SiswaUjian $siswaUjian): array {
         $jawabans = $siswaUjian->jawaban()->with('soal')->get();
 
-        $types = ['objektif', 'ganda_kompleks', 'menjodohkan', 'isian', 'essay'];
+        $tipes = ['objektif', 'ganda_kompleks', 'menjodohkan', 'isian', 'essay'];
 
         $breakdown = [];
-        foreach ($types as $tipe) {
+        foreach ($tipes as $tipe) {
             $soalType = $jawabans->filter(fn($j) => $j->soal->tipe_soal === $tipe);
 
             if ($soalType->isEmpty()) continue;
 
+            $isManual      = in_array($tipe, ['isian', 'essay']);
+            $sudahDinilai  = $soalType->filter(fn($j) => !is_null($j->nilai_manual_guru))->count();
+
             $breakdown[$tipe] = [
                 'total_soal' => $soalType->count(),
-                'rata_nilai' => round($soalType->avg('nilai_manual_guru') ?? 0, 2)
+                'sudah_dinilai' => $isManual ? $sudahDinilai : $soalType->count(),
+                'rata_nilai'   => $isManual
+                                ? ($sudahDinilai > 0
+                                    ? round($soalType->whereNotNull('nilai_manual_guru')->avg('nilai_manual_guru'), 2)
+                                    : null)
+                                : round($soalType->avg('nilai_manual_guru') ?? 0, 2),
             ];
         }
 

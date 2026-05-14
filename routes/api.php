@@ -34,6 +34,7 @@ Route::middleware('auth:sanctum')->group(function() {
         Route::put('pengaturan', [PengaturanAdminController::class, 'update']);
     });
 
+    Route::get('riwayat-ujian', [HasilUjianController::class, 'siswaHistory']);
     Route::apiResource('ujian', UjianController::class);
 
     Route::get('ujian/{ujian}/pengaturan', [PengaturanUjianController::class, 'show']);
@@ -58,7 +59,7 @@ Route::middleware('auth:sanctum')->group(function() {
         Route::get('ujian/{siswaUjian}/detail', [HasilUjianController::class, 'detailJawabanSiswa']);
     });
 
-    Route::get('ujian/riwayat', [HasilUjianController::class, 'siswaHistory']);
+    
     Route::get('ujian/{siswaUjian}/hasil', [HasilUjianController::class, 'siswaResult']);
 
 });
