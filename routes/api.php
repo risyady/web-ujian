@@ -13,7 +13,6 @@ use App\Http\Controllers\SiswaUjianController;
 use App\Http\Controllers\SoalController;
 use App\Http\Controllers\UjianController;
 use App\Http\Controllers\UserController;
-use Illuminate\Support\Facades\Storage;
 
 Route::prefix('auth')->group(function () {
     Route::post('login', [AuthController::class, 'login']);
@@ -50,6 +49,8 @@ Route::middleware('auth:sanctum')->group(function() {
     });
 
     Route::middleware('role:guru,admin,superadmin')->group(function() {
+        Route::get('ujian/{ujian}/manual', [NilaiController::class, 'listManual']);
+
         Route::get('ujian/{siswaUjian}/nilai', [NilaiController::class, 'show']);
         
         Route::put('ujian/{siswaUjian}/essay', [NilaiController::class, 'inputEssay']);

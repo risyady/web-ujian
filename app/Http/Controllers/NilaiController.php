@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\JawabanSiswa;
 use App\Models\SiswaUjian;
+use App\Models\Ujian;
 use App\Services\NilaiService;
 use Illuminate\Http\Request;
 
@@ -24,13 +25,55 @@ class NilaiController extends Controller
         ]);
     }
 
+    public function listManual(Ujian $ujian)
+    {
+        $this->authorize('view', $ujian);
+        $siswaUjians = SiswaUjian::where('ujian_id', $ujian->id)
+            ->where('status', 'dikirim')
+            ->with([
+                'user:id,name,email',
+                'jawaban' => function ($query) {
+                    $query->whereHas('soal', fn($q) =>
+                        $q->whereIn('tipe_soal', ['isian', 'essay'])
+                    )
+                    ->whereNull('nilai_manual_guru')
+                    ->with('soal:id,teks_soal,tipe_soal');
+                }
+            ])
+            ->get()
+            ->filter(fn($siswaUjian) => $siswaUjian->jawaban->isNotEmpty())
+            ->map(function ($siswaUjian) {
+                return [
+                    'siswa_ujian_id' => $siswaUjian->id,
+                    'siswa' => $siswaUjian->siswa,
+                    'total_belum' => $siswaUjian->jawaban->count(),
+                    'jawabans' => $siswaUjian->jawaban->map(fn($jawaban) => [
+                        'jawaban_id' => $jawaban->id,
+                        'soal_id' => $jawaban->soal->id,
+                        'teks_soal' => $jawaban->soal->teks_soal,
+                        'tipe_soal' => $jawaban->soal->tipe_soal,
+                        'jawaban_teks' => $jawaban->jawaban_teks,
+                    ]),
+                ];
+            })->values();
+
+        return $this->successResponse([
+            'ujian' => [
+                'id' => $ujian->id,
+                'judul_ujian' => $ujian->judul_ujian,
+            ],
+            'total_siswa_belum_dinilai' => $siswaUjians->count(),
+            'siswa_ujians' => $siswaUjians,
+        ]);
+    }
+    
     public function inputFillInBlank(Request $request, SiswaUjian $siswaUjian)
     {
         $this->authorize('update', $siswaUjian);
 
         $request->validate([
-            'jawaban'            => 'required|array',
-            'jawaban.*.soal_id'  => 'required|exists:soals,id',
+            'jawaban' => 'required|array',
+            'jawaban.*.soal_id' => 'required|exists:soals,id',
             'jawaban.*.is_true' => 'required|boolean',
         ]);
 
