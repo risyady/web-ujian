@@ -34,12 +34,9 @@ Route::middleware('auth:sanctum')->group(function() {
     });
 
     Route::get('riwayat-ujian', [HasilUjianController::class, 'siswaHistory']);
-    Route::apiResource('ujian', UjianController::class);
 
     Route::get('ujian/{ujian}/pengaturan', [PengaturanUjianController::class, 'show']);
     Route::put('ujian/{ujian}/pengaturan', [PengaturanUjianController::class, 'update']);
-
-    Route::apiResource('ujian.soal', SoalController::class);
 
     Route::middleware('cek_ip')->group(function() {
         Route::post('ujian/redeem', [SiswaUjianController::class, 'redeemCode']);
@@ -61,6 +58,7 @@ Route::middleware('auth:sanctum')->group(function() {
     });
 
     
-    Route::get('ujian/{siswaUjian}/hasil', [HasilUjianController::class, 'siswaResult']);
-
+    Route::get('siswa-ujian/{siswaUjian}/hasil', [HasilUjianController::class, 'siswaResult']);
+    Route::apiResource('ujian.soal', SoalController::class);
+    Route::apiResource('ujian', UjianController::class);
 });
