@@ -11,7 +11,7 @@ class HasilUjianController extends Controller
     public function siswaHistory(Request $request) {
         $user = auth()->user();
 
-        if(!$user->isSiswa()) {
+        if(not($user->isSiswa())) {
             return $this->errorResponse('Unauthorized', 403);
         }
 
