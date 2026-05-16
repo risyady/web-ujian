@@ -11,7 +11,7 @@ class JawabanSiswaController extends Controller
     public function save(Request $request, SiswaUjian $siswaUjian) {
         $user = auth()->user();
 
-        if ($siswaUjian->user_id !== $user->id) {
+        if ($siswaUjian->siswa_id !== $user->id) {
             return $this->errorResponse('Unauthorized.', 403);
         }
 

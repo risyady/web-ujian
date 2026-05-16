@@ -24,10 +24,10 @@ Route::middleware('auth:sanctum')->group(function() {
     Route::put('auth/me/edit', [AuthController::class, 'editProfile']);
 
     Route::middleware('role:admin,superadmin')->group(function() {
-        Route::apiResource('user', UserController::class);
-        Route::apiResource('jurusan', JurusanController::class);
         Route::post('user/bulk-store', [UserController::class, 'bulkStore']);
         Route::get('user/{user}/reset-password', [UserController::class, 'resetPassword']);
+        Route::apiResource('user', UserController::class);
+        Route::apiResource('jurusan', JurusanController::class);
 
         Route::get('pengaturan', [PengaturanAdminController::class, 'index']);
         Route::put('pengaturan', [PengaturanAdminController::class, 'update']);
@@ -35,15 +35,15 @@ Route::middleware('auth:sanctum')->group(function() {
 
     Route::get('riwayat-ujian', [HasilUjianController::class, 'siswaHistory']);
 
-    Route::get('ujian/{ujian}/pengaturan', [PengaturanUjianController::class, 'show']);
-    Route::put('ujian/{ujian}/pengaturan', [PengaturanUjianController::class, 'update']);
-
     Route::middleware('cek_ip')->group(function() {
         Route::post('ujian/redeem', [SiswaUjianController::class, 'redeemCode']);
         Route::post('ujian/{siswaUjian}/submit', [SiswaUjianController::class, 'submit']);
         
         Route::post('ujian/{siswaUjian}/jawaban', [JawabanSiswaController::class, 'save']);
     });
+    
+    Route::get('ujian/{ujian}/pengaturan', [PengaturanUjianController::class, 'show']);
+    Route::put('ujian/{ujian}/pengaturan', [PengaturanUjianController::class, 'update']);
 
     Route::middleware('role:guru,admin,superadmin')->group(function() {
         Route::get('ujian/{ujian}/manual', [NilaiController::class, 'listManual']);

@@ -11,7 +11,7 @@ class HasilUjianController extends Controller
     public function siswaHistory(Request $request) {
         $user = auth()->user();
 
-        if(not($user->isSiswa())) {
+        if(!$user->isSiswa()) {
             return $this->errorResponse('Unauthorized', 403);
         }
 
@@ -78,6 +78,7 @@ class HasilUjianController extends Controller
         $siswaUjians = $ujian->siswaUjian()->with('siswa')->get()
             ->map(function ($siswaUjian) {
                 return [
+                    'siswa_ujian_id' => $siswaUjian->id,
                     'siswa' => $siswaUjian->siswa,
                     'status' => $siswaUjian->status,
                     'waktu_mulai' => $siswaUjian->waktu_mulai,
