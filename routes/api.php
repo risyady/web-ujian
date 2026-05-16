@@ -55,6 +55,7 @@ Route::middleware('auth:sanctum')->group(function() {
 
         Route::get('ujian/{ujian}/hasil', [HasilUjianController::class, 'resultEachExam']);
         Route::get('ujian/{siswaUjian}/detail', [HasilUjianController::class, 'detailJawabanSiswa']);
+        Route::delete('ujian/{siswaUjian}/reset', [SiswaUjianController::class, 'resetUjianSiswa']);
     });
 
     

@@ -31,7 +31,7 @@ class NilaiController extends Controller
         $siswaUjians = SiswaUjian::where('ujian_id', $ujian->id)
             ->where('status', 'dikirim')
             ->with([
-                'user:id,name,email',
+                'siswa:id,name,email',
                 'jawaban' => function ($query) {
                     $query->whereHas('soal', fn($q) =>
                         $q->whereIn('tipe_soal', ['isian', 'essay'])

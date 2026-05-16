@@ -67,6 +67,15 @@ class SiswaUjianController extends Controller
         ], 'Berhasil masuk ujian');
     }
 
+    public function resetUjianSiswa(SiswaUjian $siswaUjian) {
+        $this->authorize('update', $siswaUjian);
+
+        $siswaUjian->jawaban()->delete();
+        $siswaUjian->delete();
+
+        return $this->deletedResponse('Ujian siswa berhasil direset. Siswa dapat mengikuti ujian kembali.');
+    }
+
     public function submit(SiswaUjian $siswaUjian) {
         $user = auth()->user();
 
