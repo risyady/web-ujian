@@ -36,7 +36,7 @@ class JawabanSiswaController extends Controller
 
         $jawaban = JawabanSiswa::updateOrCreate(
             [
-                'siswa_jawaban_id' => $siswaUjian->id,
+                'siswa_ujian_id' => $siswaUjian->id,
                 'soal_id' => $request->soal_id,
             ],
             [
