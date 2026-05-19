@@ -9,11 +9,7 @@ use Illuminate\Http\Request;
 class JawabanSiswaController extends Controller
 {
     public function save(Request $request, SiswaUjian $siswaUjian) {
-        $user = auth()->user();
-
-        if ($siswaUjian->siswa_id !== $user->id) {
-            return $this->errorResponse('Unauthorized.', 403);
-        }
+        $this->authorize('jawabUjian', $siswaUjian);
 
         if ($siswaUjian->status !== 'pengerjaan') {
             return $this->errorResponse('Ujian sudah selesai', 422);

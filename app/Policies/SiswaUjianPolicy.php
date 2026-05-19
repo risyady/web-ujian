@@ -79,4 +79,9 @@ class SiswaUjianPolicy
     {
         return false;
     }
+
+    public function jawabUjian(User $user, SiswaUjian $siswaUjian): bool
+    {
+        return $siswaUjian->siswa_id === $user->id;
+    }
 }
