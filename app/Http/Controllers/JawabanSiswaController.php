@@ -22,7 +22,7 @@ class JawabanSiswaController extends Controller
 
         $request->validate([
             'soal_id' => 'required|exists:soals,id',
-            'id_pilihan_terpilih' => 'nullable|ar',
+            'id_pilihan_terpilih' => 'nullable|array',
             'jawaban_teks' => 'nullable|string',
             'pasangan_terpilih' => 'nullable|array',
 
