@@ -36,6 +36,7 @@ Route::middleware('auth:sanctum')->group(function() {
     Route::get('riwayat-ujian', [HasilUjianController::class, 'siswaHistory']);
 
     Route::middleware('cek_ip')->group(function() {
+        Route::get('ujian/check-code', [SiswaUjianController::class, 'checkCode']);
         Route::post('ujian/redeem', [SiswaUjianController::class, 'redeemCode']);
         Route::post('ujian/{siswaUjian}/submit', [SiswaUjianController::class, 'submit']);
         

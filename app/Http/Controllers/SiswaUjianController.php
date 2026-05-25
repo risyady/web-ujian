@@ -8,6 +8,42 @@ use Illuminate\Http\Request;
 
 class SiswaUjianController extends Controller
 {
+    public function checkCode(Request $request) {
+        $request->validate([
+            'kode_ujian' => 'required|string'
+        ]);
+
+        $ujian = Ujian::where('kode_ujian', $request->kode_ujian)
+            ->with('guru:id,nama')
+            ->first();
+        
+        if (!$ujian) {
+            return $this->errorResponse('Kode ujian tidak valid', 404);
+        }
+
+        if ($ujian->status !== 'ongoing') {
+            return $this->errorResponse('Ujian belum dimulai atau sudah selesai', 422);
+        }
+
+        $redeemed = SiswaUjian::where('ujian_id', $ujian->id)
+            ->where('user_id', auth()->id())
+            ->exists();
+
+        if ($redeemed) {
+            return $this->errorResponse('Kamu sudah pernah mengikuti ujian ini', 422);
+        }
+
+        return $this->successResponse([
+            'judul_ujian' => $ujian->judul_ujian,
+            'tipe_ujian' => $ujian->tipe_ujian,
+            'guru' => $ujian->guru,
+            'durasi_menit' => $ujian->durasi_menit,
+            'tanggal_ujian' => $ujian->tanggal_ujian,
+            'waktu_mulai' => $ujian->waktu_mulai,
+            'waktu_selesai' => $ujian->waktu_selesai,
+        ], 'Ujian ditemukan');
+    }
+
     public function redeemCode(Request $request) {
         $request->validate([
             'kode_ujian' => 'required|string'
