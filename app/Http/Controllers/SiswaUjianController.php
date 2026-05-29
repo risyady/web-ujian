@@ -26,7 +26,7 @@ class SiswaUjianController extends Controller
         }
 
         $redeemed = SiswaUjian::where('ujian_id', $ujian->id)
-            ->where('user_id', auth()->id())
+            ->where('siswa_id', auth()->id())
             ->exists();
 
         if ($redeemed) {
