@@ -18,6 +18,8 @@ Route::prefix('auth')->group(function () {
     Route::post('login', [AuthController::class, 'login']);
 });
 
+Route::get('cek-ip', [SiswaUjianController::class, 'checkIp']);
+
 Route::middleware('auth:sanctum')->group(function() {
     Route::post('auth/logout', [AuthController::class, 'logout']);
     Route::get('auth/me', [AuthController::class, 'me']);

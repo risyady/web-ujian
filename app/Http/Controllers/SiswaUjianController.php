@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\PengaturanAdmin;
 use App\Models\SiswaUjian;
 use App\Models\Ujian;
 use Illuminate\Http\Request;
@@ -132,6 +133,25 @@ class SiswaUjianController extends Controller
         $siswaUjian->update([
             'status' => 'dikirim',
             'waktu_selesai' => now(),
+        ]);
+    }
+
+    public function checkIp(Request $request) {
+        $ipAsli = trim(explode(',', $request->header('X-Forwarded-For') ?? $request->ip())[0]);
+
+        if ($ipAsli === '::1') {
+            $ipAsli = '127.0.0.1';
+        }
+
+        $allowedIp  = PengaturanAdmin::ambil('allowed_ip');
+        $allowedIps = $allowedIp
+            ? array_map('trim', explode(',', $allowedIp))
+            : [];
+
+        return $this->successResponse([
+            'ip'         => $ipAsli,
+            'allowed_ips'=> $allowedIps,
+            'is_allowed' => empty($allowedIps) || in_array($ipAsli, $allowedIps),
         ]);
     }
 }

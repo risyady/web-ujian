@@ -16,7 +16,7 @@ class CekIpUjian
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $allowedIp = PengaturanAdmin::ambil('allowed_api');
+        $allowedIp = PengaturanAdmin::ambil('allowed_ip');
 
         if (!$allowedIp) {
             return $next($request);
@@ -24,6 +24,10 @@ class CekIpUjian
 
         $ipSiswa = trim(explode(',', $request->header('X-Forwarded-For') ?? $request->ip())[0]);
         $allowedIps = array_map('trim', explode(',', $allowedIp));
+
+        if ($ipSiswa === '::1') {
+            $ipSiswa = '127.0.0.1';
+        }
 
         if(!in_array($ipSiswa, $allowedIps)) {
             return response()->json([

@@ -39,7 +39,7 @@ class SiswaUjian extends Model
         $used = now()->diffInSeconds($this->waktu_mulai);
         $remaining = $duration - $used;
         
-        return max(0, $remaining);
+        return $remaining <= 0;
     }
 
     public function allJawabanScored(): bool {
