@@ -43,8 +43,7 @@ class JawabanSiswaController extends Controller
         );
 
         return $this->successResponse([
-            'jawaban' => $jawaban,
-            'sisa_waktu' => $siswaUjian->remainingTimeSecond(),
+            'jawaban' => $jawaban
         ], 'Jawaban berhasil disimpan');
     }
 

@@ -49,9 +49,9 @@ Route::middleware('auth:sanctum')->group(function() {
     Route::put('ujian/{ujian}/pengaturan', [PengaturanUjianController::class, 'update']);
 
     Route::middleware('role:guru,admin,superadmin')->group(function() {
-        Route::get('ujian/{ujian}/manual', [NilaiController::class, 'listManual']);
+        Route::get('ujian/{ujian}/list-penilaian-manual', [NilaiController::class, 'listManual']);
 
-        Route::get('ujian/{siswaUjian}/nilai', [NilaiController::class, 'show']);
+        Route::get('ujian/{siswaUjian}/jawaban-siswa', [NilaiController::class, 'show']);
         
         Route::put('ujian/{siswaUjian}/essay', [NilaiController::class, 'inputEssay']);
         Route::put('ujian/{siswaUjian}/isian', [NilaiController::class, 'inputFillInBlank']);

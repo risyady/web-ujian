@@ -23,8 +23,8 @@ class NilaiService {
                 'objektif' => $this->calculateObjective($jawaban),
                 'ganda_kompleks' => $this->calculateMultipleResponse($jawaban),
                 'menjodohkan' => $this->calculateMatching($jawaban),
-                'isian' => $this->$jawaban->nilai_manual_guru ?? 0,
-                'essay' => $this->$jawaban->nilai_manual_guru ?? 0,
+                'isian' => $jawaban->nilai_manual_guru ?? 0,
+                'essay' => $jawaban->nilai_manual_guru ?? 0,
             };
 
             if ($nilai !== null) {
@@ -50,7 +50,9 @@ class NilaiService {
     }
 
     private function calculateObjective($jawaban): float {
-        $pilihan = $jawaban->id_pilihan_terpilih ?? [];
+        $pilihan = is_array($jawaban->id_pilihan_terpilih)
+            ? $jawaban->id_pilihan_terpilih
+            : (json_decode($jawaban->id_pilihan_terpilih, true) ?: []);
         $correct = $jawaban->soal->pilihanJawaban
             ->where('is_true', true)
             ->pluck('id')
@@ -60,15 +62,13 @@ class NilaiService {
     }
 
     private function calculateMultipleResponse($jawaban): float {
-        $pilihan = $jawaban->id_pilihan_terpilih ?? [];
-        $correct = $jawaban->soal->pilihanJawaban
-            ->where('is_true', true)
-            ->pluck('id')
-            ->toArray();
+        $pilihan = is_array($jawaban->id_pilihan_terpilih)
+            ? $jawaban->id_pilihan_terpilih
+            : (json_decode($jawaban->id_pilihan_terpilih, true) ?: []);
         
         $total = 0;
         foreach ($pilihan as $id) {
-            $pilihanJawaban = $jawaban->soal->pilihanJawaban->find($id);
+            $pilihanJawaban = $jawaban->soal->pilihanJawaban->firstWhere('id', $id);
             if ($pilihanJawaban && $pilihanJawaban->is_true) {
                 $total += $pilihanJawaban->persentase_nilai;
             }
@@ -78,24 +78,31 @@ class NilaiService {
     }
 
     private function calculateMatching($jawaban): float {
-        $pasangan = $jawaban->pasangan_terpilih ?? [];
-        $correct = $jawaban->soal->pilihanJawaban
-            ->whereNotNull('teks_pilihan')
-            ->whereNotNull('teks_pasangan');
+        $pasangan = is_array($jawaban->pasangan_terpilih)
+            ? $jawaban->pasangan_terpilih
+            : (json_decode($jawaban->pasangan_terpilih, true) ?: []);
+
+        $leftCount = $jawaban->soal->pilihanJawaban->whereNotNull('teks_pilihan')->count();
+        if ($leftCount === 0) return 0;
 
         $correctTotal = 0;
         foreach ($pasangan as $p) {
-            $match = $correct->where('id', $p['pilihan_id'])
-                ->where('teks_pasangan', function($q) use ($p) {
-                    return $q->id === $p['pasangan_id'];
-                })
-                ->isNotEmpty();
-            
-            if ($match) $correctTotal++;
+            if (!isset($p['pilihan_id'], $p['pasangan_id'])) continue;
+
+            if ($p['pilihan_id'] === $p['pasangan_id']) {
+                $correctTotal++;
+            }
         }
 
-        return $correct->count() > 0
-            ? ($correctTotal / $correct->count()) * 100
-            : 0;
+        return $correctTotal * 100;
     }
+
+    public function calculateForJawaban($jawaban): ?float {
+    return match($jawaban->soal->tipe_soal) {
+        'objektif'       => $this->calculateObjective($jawaban),
+        'ganda_kompleks' => $this->calculateMultipleResponse($jawaban),
+        'menjodohkan'    => $this->calculateMatching($jawaban),
+        default          => null,
+    };
+}
 }

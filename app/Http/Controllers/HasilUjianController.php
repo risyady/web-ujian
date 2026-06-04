@@ -4,10 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Models\SiswaUjian;
 use App\Models\Ujian;
+use App\Services\NilaiService;
 use Illuminate\Http\Request;
 
 class HasilUjianController extends Controller
 {
+    public function __construct(protected NilaiService $nilaiService) {}
+
     public function siswaHistory(Request $request) {
         $user = auth()->user();
 
@@ -163,14 +166,19 @@ class HasilUjianController extends Controller
             $isManual      = in_array($tipe, ['isian', 'essay']);
             $sudahDinilai  = $soalType->filter(fn($j) => !is_null($j->nilai_manual_guru))->count();
 
+            if ($isManual) {
+                $rataRata = $sudahDinilai > 0
+                    ? round($soalType->whereNotNull('nilai_manual_guru')->avg('nilai_manual_guru'), 2)
+                    : null;
+            } else {
+                $nilaiOtomatis = $soalType->map(fn($j) => $this->nilaiService->calculateForJawaban($j));
+                $rataRata = round($nilaiOtomatis->avg(), 2);
+            }
+
             $breakdown[$tipe] = [
                 'total_soal' => $soalType->count(),
                 'sudah_dinilai' => $isManual ? $sudahDinilai : $soalType->count(),
-                'rata_nilai'   => $isManual
-                                ? ($sudahDinilai > 0
-                                    ? round($soalType->whereNotNull('nilai_manual_guru')->avg('nilai_manual_guru'), 2)
-                                    : null)
-                                : round($soalType->avg('nilai_manual_guru') ?? 0, 2),
+                'rata_nilai'   => $rataRata
             ];
         }
 
