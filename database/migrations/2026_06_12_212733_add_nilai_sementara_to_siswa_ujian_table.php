@@ -11,12 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('pengaturan_admins', function (Blueprint $table) {
-            $table->id();
-            $table->string('key')->unique();
-            $table->text('value')->nullable();
-            $table->string('keterangan')->nullable();
-            $table->timestamps();
+        Schema::table('siswa_ujians', function (Blueprint $table) {
+            $table->decimal('nilai_sementara', 5, 2)->nullable()->after('status');
         });
     }
 
@@ -25,6 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('pengaturan_admins');
+        Schema::table('siswa_ujians', function (Blueprint $table) {
+            $table->dropColumn(['nilai_sementara']);
+        });
     }
 };

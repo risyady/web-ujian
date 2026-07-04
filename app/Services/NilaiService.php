@@ -74,7 +74,7 @@ class NilaiService {
             }
         }
 
-        return max(0, $total);
+        return min(100, max(0, $total));
     }
 
     private function calculateMatching($jawaban): float {
@@ -94,15 +94,58 @@ class NilaiService {
             }
         }
 
-        return $correctTotal * 100;
+        return min(100, ($correctTotal / $leftCount) * 100);
     }
 
     public function calculateForJawaban($jawaban): ?float {
-    return match($jawaban->soal->tipe_soal) {
-        'objektif'       => $this->calculateObjective($jawaban),
-        'ganda_kompleks' => $this->calculateMultipleResponse($jawaban),
-        'menjodohkan'    => $this->calculateMatching($jawaban),
-        default          => null,
-    };
-}
+        return match($jawaban->soal->tipe_soal) {
+            'objektif'       => $this->calculateObjective($jawaban),
+            'ganda_kompleks' => $this->calculateMultipleResponse($jawaban),
+            'menjodohkan'    => $this->calculateMatching($jawaban),
+            default          => null,
+        };
+    }
+
+    public function hitungSementara(SiswaUjian $siswaUjian): void
+    {
+        $jawabans   = $siswaUjian->jawaban()->with('soal.pilihanJawaban')->get();
+        $pengaturan = $siswaUjian->ujian->pengaturan;
+
+        $nilaiPerTipe = [
+            'objektif' => [],
+            'ganda_kompleks' => [],
+            'menjodohkan' => [],
+        ];
+
+        foreach ($jawabans as $jawaban) {
+            $tipe = $jawaban->soal->tipe_soal;
+
+            if (in_array($tipe, ['isian', 'essay'])) continue;
+
+            $nilai = match($tipe) {
+                'pilihan_ganda'         => $this->calculateObjective($jawaban),
+                'pilihan_ganda_komplek' => $this->calculateMultipleResponse($jawaban),
+                'menjodohkan'           => $this->calculateMatching($jawaban),
+                default                 => null,
+            };
+
+            if ($nilai !== null) {
+                $nilaiPerTipe[$tipe][] = $nilai;
+            }
+        }
+
+        $rata = [];
+        foreach ($nilaiPerTipe as $tipe => $values) {
+            $rata[$tipe] = count($values) > 0
+                ? array_sum($values) / count($values)
+                : 0;
+        }
+
+        $nilaiSementara =
+            ($rata['objektif']         * ($pengaturan->bobot_objektif / 100)) +
+            ($rata['ganda_kompleks'] * ($pengaturan->bobot_ganda_kompleks / 100)) +
+            ($rata['menjodohkan']           * ($pengaturan->bobot_menjodohkan / 100));
+
+        $siswaUjian->update(['nilai_sementara' => round($nilaiSementara, 2)]);
+    }
 }

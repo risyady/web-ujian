@@ -4,7 +4,6 @@ namespace Database\Seeders;
 
 use App\Models\User;
 use App\Models\Jurusan;
-use App\Models\PengaturanAdmin;
 use App\Models\Ujian;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -59,18 +58,5 @@ class DatabaseSeeder extends Seeder
         User::factory()->count(10)->create();
 
         Ujian::factory()->count(5)->create()->each(fn($ujian) => $ujian->pengaturan()->create());
-
-        PengaturanAdmin::insert([
-            [
-                'key' => 'allowed_ip',
-                'value' => null,
-                'keterangan' => 'IP yang diizinkan untuk mengakses ujian. Pisahkan dengan koma jika lebih dari 1.',
-            ],
-            [
-                'key' => 'default_password',
-                'value' => '123456',
-                'keterangan' => 'Password default saat user dibuat atau reset password.',
-            ]
-        ]);
     }
 }

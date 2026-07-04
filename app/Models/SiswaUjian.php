@@ -12,6 +12,7 @@ class SiswaUjian extends Model
         'waktu_mulai',
         'waktu_selesai',
         'status',
+        'nilai_sementara',
         'nilai_akhir',
         'urutan_soal'
     ];

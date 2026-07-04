@@ -67,7 +67,8 @@ class HasilUjianController extends Controller
                 'id' => $siswaUjian->id,
                 'waktu_mulai' => $siswaUjian->waktu_mulai,
                 'waktu_selesai' => $siswaUjian->waktu_selesai,
-                'nilai_akhir' => $siswaUjian->nilai_akhir,
+                'nilai_sementara' => $siswaUjian->nilai_sementara,
+                'nilai_akhir' => $siswaUjian->status === 'dinilai' ? $siswaUjian->nilai_akhir : null,
                 'status' => $siswaUjian->status
             ],
             'breakdown' => $breakdown,

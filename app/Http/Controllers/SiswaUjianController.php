@@ -2,13 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\PengaturanAdmin;
 use App\Models\SiswaUjian;
 use App\Models\Ujian;
+use App\Services\NilaiService;
 use Illuminate\Http\Request;
 
 class SiswaUjianController extends Controller
 {
+    public function __construct(protected NilaiService $nilaiService) {}
+
     public function checkCode(Request $request) {
         $request->validate([
             'kode_ujian' => 'required|string'
@@ -134,10 +136,12 @@ class SiswaUjianController extends Controller
             'status' => 'dikirim',
             'waktu_selesai' => now(),
         ]);
+
+        $this->nilaiService->hitungSementara($siswaUjian);
     }
 
     public function checkIp(Request $request) {
-        $ipAsli = trim(explode(',', $request->header('X-Forwarded-For') ?? $request->ip())[0]);
+        /* $ipAsli = trim(explode(',', $request->header('X-Forwarded-For') ?? $request->ip())[0]);
 
         if ($ipAsli === '::1') {
             $ipAsli = '127.0.0.1';
@@ -149,9 +153,17 @@ class SiswaUjianController extends Controller
             : [];
 
         return $this->successResponse([
-            'ip'         => $ipAsli,
-            'allowed_ips'=> $allowedIps,
+            'ip' => $ipAsli,
+            'allowed_ips' => $allowedIps,
             'is_allowed' => empty($allowedIps) || in_array($ipAsli, $allowedIps),
+        ]); */
+
+        return $this->successResponse([
+            'X-Forwarded-For' => $request->header('X-Forwarded-For'),
+            'X-Real-IP' => $request->header('X-Real-IP'),
+            'CF-Connecting-IP' => $request->header('CF-Connecting-IP'),
+            'True-Client-IP' => $request->header('True-Client-IP'),
+            'Dari laravel' => $request->ip()
         ]);
     }
 }

@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\DeviceSekolahController;
 use App\Http\Controllers\HasilUjianController;
 use App\Http\Controllers\JawabanSiswaController;
 use App\Http\Controllers\JurusanController;
@@ -13,6 +14,7 @@ use App\Http\Controllers\SiswaUjianController;
 use App\Http\Controllers\SoalController;
 use App\Http\Controllers\UjianController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\ValidasiAksesUjianController;
 
 Route::prefix('auth')->group(function () {
     Route::post('login', [AuthController::class, 'login']);
@@ -33,9 +35,13 @@ Route::middleware('auth:sanctum')->group(function() {
 
         Route::get('pengaturan', [PengaturanAdminController::class, 'index']);
         Route::put('pengaturan', [PengaturanAdminController::class, 'update']);
+
+        Route::apiResource('perangkat', DeviceSekolahController::class);
     });
 
     Route::get('riwayat-ujian', [HasilUjianController::class, 'siswaHistory']);
+
+    Route::post('/validasi-akses', [ValidasiAksesUjianController::class, 'validasi']);
 
     Route::middleware('cek_ip')->group(function() {
         Route::get('ujian/check-code', [SiswaUjianController::class, 'checkCode']);

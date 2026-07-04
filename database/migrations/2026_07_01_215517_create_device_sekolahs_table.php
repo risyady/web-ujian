@@ -11,11 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('pengaturan_admins', function (Blueprint $table) {
+        Schema::create('device_sekolahs', function (Blueprint $table) {
             $table->id();
-            $table->string('key')->unique();
-            $table->text('value')->nullable();
-            $table->string('keterangan')->nullable();
+            $table->string('nama_pc', 50)->unique();
             $table->timestamps();
         });
     }
@@ -25,6 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('pengaturan_admins');
+        Schema::dropIfExists('device_sekolahs');
     }
 };
