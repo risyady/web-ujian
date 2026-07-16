@@ -13,7 +13,7 @@ class ValidasiAksesUjianController extends Controller
         $idPcClient = $request->input('id_pc');
         $radiusMaksimalMeter = 150;
 
-        if($metode === 'GPS') {
+        if($metode === 'GEOLOCATION') {
             $latitudeSiswa = $request->input('lat');
             $longitudeSiswa = $request->input('lon');
 
@@ -32,14 +32,14 @@ class ValidasiAksesUjianController extends Controller
 
             if($jarakSiswaKeLokasiSekolah <= $radiusMaksimalMeter) {
                 return $this->successResponse([
-                    'metode' => 'GPS',
+                    'metode' => 'GEOLOCATION',
                     'jarak_meter' => round($jarakSiswaKeLokasiSekolah, 2)
                 ], "Akses diizinkan! GPS terverifikasi (Jarak: {$jarakSiswaKeLokasiSekolah}m dari sekolah)");
             }
         }
 
         if(!empty($idPcClient)) {
-            $pcValid = DeviceSekolah::where('nama_pc', strtoupper($idPcClient))->first();
+            $pcValid = DeviceSekolah::where('id', strtoupper($idPcClient))->first();
 
             if($pcValid) {
                 return $this->successResponse([

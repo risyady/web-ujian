@@ -20,7 +20,7 @@ class UjianController extends Controller
 
         $ujians = Ujian::with('guru')->when($user->isGuru(), function ($query) use ($user) {
                 $query->where('guru_id', $user->id);
-            })->latest()->paginate(10);
+            })->get();
 
         return $this->successResponse($ujians);
     }

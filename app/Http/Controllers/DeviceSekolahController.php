@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\DeviceSekolah;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class DeviceSekolahController extends Controller
 {
@@ -12,7 +13,7 @@ class DeviceSekolahController extends Controller
      */
     public function index()
     {
-        $nama_pc = DeviceSekolah::latest()->paginate(10);
+        $nama_pc = DeviceSekolah::all();
         return $this->successResponse($nama_pc);
     }
 
@@ -33,32 +34,35 @@ class DeviceSekolahController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(DeviceSekolah $deviceSekolah)
+    public function show(DeviceSekolah $perangkat)
     {
-        return $this->successResponse($deviceSekolah);
+        return $this->successResponse($perangkat);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, DeviceSekolah $deviceSekolah)
+    public function update(Request $request, DeviceSekolah $perangkat)
     {
         $request->validate([
-            'nama_pc' => 'sometimes|string|max:50|unique:device_sekolahs,nama_pc,except,id'
+            'nama_pc' => [
+                'sometimes',
+                'string',
+                'max:50',
+                Rule::unique('device_sekolahs', 'nama_pc')->ignore($perangkat->id),
+            ]
         ]);
 
-        $deviceSekolah->update($request->all());
-
-        return $this->successResponse($deviceSekolah, 'identitas PC berhasil diperbarui');
+        $perangkat->update($request->only(['nama_pc']));
+        return $this->successResponse($perangkat, 'identitas PC berhasil diperbarui');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(DeviceSekolah $deviceSekolah)
+    public function destroy(DeviceSekolah $perangkat)
     {
-        $deviceSekolah->delete();
-
+        $perangkat->delete();
         return $this->deletedResponse('identitas PC berhasil dihapus');
     }
 }

@@ -96,7 +96,7 @@ class UserController extends Controller
     private function querySelectUser($role) {
         return User::with('jurusan')->when($role !== 'superadmin', function ($query) {
             $query->where('role', '!=', 'admin')->where('role', '!=', 'superadmin');
-        })->latest()->paginate(10);
+        })->get();
     }
     
     private function loadJurusanSiswa(User $user): User

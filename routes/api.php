@@ -43,18 +43,18 @@ Route::middleware('auth:sanctum')->group(function() {
 
     Route::post('/validasi-akses', [ValidasiAksesUjianController::class, 'validasi']);
 
-    Route::middleware('cek_ip')->group(function() {
+    //::middleware('cek_ip')->group(function() {
         Route::get('ujian/check-code', [SiswaUjianController::class, 'checkCode']);
         Route::post('ujian/redeem', [SiswaUjianController::class, 'redeemCode']);
         Route::post('ujian/{siswaUjian}/submit', [SiswaUjianController::class, 'submit']);
         
         Route::post('ujian/{siswaUjian}/jawaban', [JawabanSiswaController::class, 'save']);
-    });
+    //});
     
     Route::get('ujian/{ujian}/pengaturan', [PengaturanUjianController::class, 'show']);
     Route::put('ujian/{ujian}/pengaturan', [PengaturanUjianController::class, 'update']);
 
-    Route::middleware('role:guru,admin,superadmin')->group(function() {
+    Route::middleware('role:guru')->group(function() {
         Route::get('ujian/{ujian}/list-penilaian-manual', [NilaiController::class, 'listManual']);
 
         Route::get('ujian/{siswaUjian}/jawaban-siswa', [NilaiController::class, 'show']);

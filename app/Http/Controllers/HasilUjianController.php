@@ -20,8 +20,7 @@ class HasilUjianController extends Controller
 
         $history = SiswaUjian::where('siswa_id', $user->id)
             ->with('ujian:id,judul_ujian,tipe_ujian,tanggal_ujian,semester,tahun_ajar')
-            ->latest()
-            ->paginate(10);
+            ->get();
 
         return $this->successResponse($history);
     }
